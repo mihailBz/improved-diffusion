@@ -1,6 +1,7 @@
 import copy
 import functools
 import os
+import time
 
 import blobfile as bf
 import numpy as np
@@ -69,6 +70,8 @@ class TrainLoop:
         self.step = 0
         self.resume_step = 0
         self.global_batch = self.batch_size * dist.get_world_size()
+
+        self.training_time = 0
 
         self.model_params = list(self.model.parameters())
         self.master_params = self.model_params
@@ -159,6 +162,8 @@ class TrainLoop:
         self.model.convert_to_fp16()
 
     def run_loop(self):
+        training_start = time.time()
+        # logger.info(f'start time: {training_start}')
         while (
             not self.lr_anneal_steps
             or self.step + self.resume_step < self.lr_anneal_steps
@@ -173,6 +178,10 @@ class TrainLoop:
                 if os.environ.get("DIFFUSION_TRAINING_TEST", "") and self.step > 0:
                     return
             self.step += 1
+            self.training_time = time.time() - training_start
+            # logger.info(f'training time: {self.training_time}')
+            # logger.logkv('training_time', self.training_time)
+
         # Save the last checkpoint if it wasn't already saved.
         if (self.step - 1) % self.save_interval != 0:
             self.save()
@@ -265,6 +274,7 @@ class TrainLoop:
     def log_step(self):
         logger.logkv("step", self.step + self.resume_step)
         logger.logkv("samples", (self.step + self.resume_step + 1) * self.global_batch)
+        logger.logkv('training time', self.training_time)
         if self.use_fp16:
             logger.logkv("lg_loss_scale", self.lg_loss_scale)
 
