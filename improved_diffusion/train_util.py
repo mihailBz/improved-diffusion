@@ -29,23 +29,24 @@ INITIAL_LOG_LOSS_SCALE = 20.0
 
 class TrainLoop:
     def __init__(
-        self,
-        *,
-        model,
-        diffusion,
-        data,
-        batch_size,
-        microbatch,
-        lr,
-        ema_rate,
-        log_interval,
-        save_interval,
-        resume_checkpoint,
-        use_fp16=False,
-        fp16_scale_growth=1e-3,
-        schedule_sampler=None,
-        weight_decay=0.0,
-        lr_anneal_steps=0,
+            self,
+            *,
+            model,
+            diffusion,
+            data,
+            batch_size,
+            microbatch,
+            lr,
+            ema_rate,
+            log_interval,
+            save_interval,
+            resume_checkpoint,
+            use_fp16=False,
+            fp16_scale_growth=1e-3,
+            schedule_sampler=None,
+            weight_decay=0.0,
+            lr_anneal_steps=0,
+            num_steps=None
     ):
         self.model = model
         self.diffusion = diffusion
@@ -66,6 +67,7 @@ class TrainLoop:
         self.schedule_sampler = schedule_sampler or UniformSampler(diffusion)
         self.weight_decay = weight_decay
         self.lr_anneal_steps = lr_anneal_steps
+        self.num_steps = num_steps
 
         self.step = 0
         self.resume_step = 0
@@ -165,8 +167,9 @@ class TrainLoop:
         training_start = time.time()
         # logger.info(f'start time: {training_start}')
         while (
-            not self.lr_anneal_steps
-            or self.step + self.resume_step < self.lr_anneal_steps
+                (not self.lr_anneal_steps
+                 or self.step + self.resume_step < self.lr_anneal_steps)
+                and (self.num_steps is not None and self.step < self.num_steps)
         ):
             batch, cond = next(self.data)
             self.run_step(batch, cond)
