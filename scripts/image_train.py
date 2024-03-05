@@ -23,6 +23,7 @@ def main():
     logger.configure()
 
     logger.log("creating model and diffusion...")
+    logger.log(args)
     model, diffusion = create_model_and_diffusion(
         **args_to_dict(args, model_and_diffusion_defaults().keys())
     )
