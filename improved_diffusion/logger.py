@@ -444,7 +444,11 @@ def configure(dir=None, format_strs=None, comm=None, log_suffix=""):
     If comm is provided, average all numerical stats across that comm
     """
     if dir is None:
-        dir = os.getenv("OPENAI_LOGDIR")
+        dir_name = datetime.datetime.now().strftime("openai-%Y-%m-%d-%H-%M-%S-%f")
+        dir = osp.join(
+            os.getenv("OPENAI_LOGDIR"),
+            dir_name
+        )
     if dir is None:
         dir = osp.join(
             tempfile.gettempdir(),

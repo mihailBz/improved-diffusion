@@ -4,7 +4,7 @@ from PIL import Image
 
 
 def main():
-    data_dir = './celeb64'
+    data_dir = '../celeb64'
     os.mkdir(data_dir)
     with open('celeb_data.pkl', 'rb') as f:
         images = pickle.load(f)
