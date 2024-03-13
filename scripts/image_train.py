@@ -3,6 +3,8 @@ Train a diffusion model on images.
 """
 
 import argparse
+import datetime
+import os
 
 from improved_diffusion import dist_util, logger
 from improved_diffusion.image_datasets import load_data
@@ -20,7 +22,7 @@ def main():
     args = create_argparser().parse_args()
 
     dist_util.setup_dist()
-    logger.configure()
+    logger.configure(dir=os.path.join('./logs', args.exp))
 
     logger.log("creating model and diffusion...")
     logger.log(args)
@@ -74,7 +76,8 @@ def create_argparser():
         resume_checkpoint="",
         use_fp16=False,
         fp16_scale_growth=1e-3,
-        num_steps=10000
+        num_steps=10000,
+        exp=datetime.datetime.now().strftime("openai-%Y-%m-%d-%H-%M-%S-%f")
     )
     defaults.update(model_and_diffusion_defaults())
     parser = argparse.ArgumentParser()
