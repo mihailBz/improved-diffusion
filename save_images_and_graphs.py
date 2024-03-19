@@ -9,7 +9,7 @@ from PIL import Image
 
 
 def save_images(log_dir):
-    npz_file = glob.glob(f"{log_dir}/*.npz")[0]
+    npz_file = glob.glob(f"{log_dir}/../sampling/*.npz")[0]
 
     data = np.load(npz_file)
     images = data['arr_0']
@@ -26,7 +26,7 @@ def save_plots(log_dir):
     plots_dir = os.path.join(log_dir, 'plots')
     os.makedirs(plots_dir, exist_ok=True)
 
-    df = pd.read_csv(os.path.join(log_dir, 'progress.csv'))
+    df = pd.read_csv(os.path.join(log_dir, '../training/progress.csv'))
 
     # Plotting
     fig, axs = plt.subplots(3, 1, figsize=(10, 15))
@@ -63,7 +63,7 @@ def save_plots(log_dir):
 
 
 def main(args):
-    log_dir = os.path.join('./logs', args.exp)
+    log_dir = os.path.join('./logs', args.exp, 'results')
     save_images(log_dir)
     save_plots(log_dir)
 

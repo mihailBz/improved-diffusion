@@ -25,7 +25,7 @@ def main():
     args = create_argparser().parse_args()
 
     dist_util.setup_dist()
-    logger.configure(dir=os.path.join('./logs', args.exp))
+    logger.configure(dir=os.path.join('./logs', args.exp, 'sampling'))
 
     logger.log("creating model and diffusion...")
     logger.log(args)
