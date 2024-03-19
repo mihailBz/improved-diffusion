@@ -9,7 +9,8 @@ from PIL import Image
 
 
 def save_images(log_dir):
-    npz_file = glob.glob(f"{log_dir}/../sampling/*.npz")[0]
+    npz_dir = os.path.join(log_dir, '../sampling')
+    npz_file = glob.glob(f"{npz_dir}/*.npz")[0]
 
     data = np.load(npz_file)
     images = data['arr_0']
