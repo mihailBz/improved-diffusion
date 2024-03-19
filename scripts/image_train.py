@@ -4,6 +4,7 @@ Train a diffusion model on images.
 
 import argparse
 import datetime
+import json
 import os
 
 from improved_diffusion import dist_util, logger
@@ -22,9 +23,12 @@ def main():
     args = create_argparser().parse_args()
 
     dist_util.setup_dist()
-    logger.configure(dir=os.path.join('./logs', args.exp, 'training'))
+    log_dir = os.path.join('./logs', args.exp, 'training')
+    logger.configure(dir=log_dir)
 
     logger.log("creating model and diffusion...")
+    with open(os.path.join(log_dir, 'args.json'), 'w') as out_file:
+        json.dump(vars(args), out_file, indent=4)
     logger.log(args)
     model, diffusion = create_model_and_diffusion(
         **args_to_dict(args, model_and_diffusion_defaults().keys())

@@ -5,6 +5,7 @@ numpy array. This can be used to produce samples for FID evaluation.
 
 import argparse
 import datetime
+import json
 import os
 
 import numpy as np
@@ -25,10 +26,12 @@ def main():
     args = create_argparser().parse_args()
 
     dist_util.setup_dist()
-    logger.configure(dir=os.path.join('./logs', args.exp, 'sampling'))
+    log_dir = os.path.join('./logs', args.exp, 'sampling')
+    logger.configure(dir=log_dir)
 
     logger.log("creating model and diffusion...")
-    logger.log(args)
+    with open(os.path.join(log_dir, 'args.json'), 'w') as out_file:
+        json.dump(vars(args), out_file, indent=4)
     model, diffusion = create_model_and_diffusion(
         **args_to_dict(args, model_and_diffusion_defaults().keys())
     )
