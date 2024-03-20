@@ -39,6 +39,7 @@ def save_plots(log_dir):
     axs[0].set_ylabel('Loss')
     axs[0].grid(True)
     axs[0].legend()
+    axs[0].set_ylim(None, 0.2)
 
     # MSE plot
     axs[1].plot(df['step'], df['mse'], label='MSE', color='r')
@@ -47,6 +48,7 @@ def save_plots(log_dir):
     axs[1].set_ylabel('MSE')
     axs[1].grid(True)
     axs[1].legend()
+    axs[1].set_ylim(None, 0.2)
 
     # Training time plot
     axs[2].plot(df['step'], df['training time'], label='Training Time', color='g')
