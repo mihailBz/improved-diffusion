@@ -12,15 +12,18 @@ def save_images(log_dir):
     images_dir = os.path.join(log_dir, 'images')
     os.makedirs(images_dir, exist_ok=True)
 
-    npz_dir = os.path.join(log_dir, '../sampling')
-    npz_file = glob.glob(f"{npz_dir}/*.npz")[0]
+    sampling_dirs = glob.glob(f"{log_dir}/../sampling_*")
+    for sampling_dir in sampling_dirs:
+        npz_file = glob.glob(f'{sampling_dir}/*.npz')[0]
+        data = np.load(npz_file)
+        images = data['arr_0']
 
-    data = np.load(npz_file)
-    images = data['arr_0']
+        for idx, img_array in enumerate(images):
+            img = Image.fromarray(img_array)
+            model_name = os.path.basename(sampling_dir).split('_')[1]
+            os.makedirs(os.path.join(images_dir, model_name), exist_ok=True)
 
-    for idx, img_array in enumerate(images):
-        img = Image.fromarray(img_array)
-        img.save(os.path.join(images_dir, f'image_{idx}.png'))
+            img.save(os.path.join(images_dir, model_name, f'image_{idx}.png'))
 
 
 def save_plots(log_dir):
